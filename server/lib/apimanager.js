@@ -5,7 +5,7 @@ Config = require('../lib/config');
 ReceiptDetail = require('../models/receiptdetail');
 
 module.exports = ApiManager = {
-
+    
     //# configurez votre domaine (ie: http://www.skerou.com/)
     apiHostname: 'http://localhost:9800/',
 
@@ -20,19 +20,32 @@ module.exports = ApiManager = {
      //   'user.update': 'onInterUpdate',
     },
     
-    onConfigChange: function(event, err, config) {
-        if (config.id != Config.reutilisateurID) {
+    onConfigChange: function(event, id) {
+        console.log('conf change');
+        console.log(event);
+        console.log(id);
+        if (id != Config.reutilisateurID) {
             return;
         }
-        console.log('conf change');
+
         //# Ne modifiez pas cette ligne sauf si vous savez ce que vous faites
-        this.api.setBasicAuth(config.login, config.password);
+        
+        /*ReuConfig.getConfig(function(err, conf) {
+            if (conf) {
+                ApiManager.api.setBasicAuth(conf.login, conf.password);
+            }
+        });*/
+
+
+        //this.api.setBasicAuth(config.login, config.password);
 
         //# Ce callback est un bon moyent de détecter lorsque l'utilisateur enregistre
         //# initialement ses identiants
         //# Vous pouvez par exemple envoyer toutes les DATA déjà présentes
         ReceiptDetail.all(function(err, instances) {
-            this.api.post('receiptdetails', instances, function(err, response, body) {
+            ApiManager.api.post('test',
+            //'receiptdetails',
+            instances, function(err, response, body) {
                     if (err != null) {
                         console.log(err);
                     }

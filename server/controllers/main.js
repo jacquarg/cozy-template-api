@@ -1,4 +1,5 @@
 require('../lib/apimanager');
+//require('../services/watcher');
 
 ReuConfig = require('../models/reuconfig');
 
