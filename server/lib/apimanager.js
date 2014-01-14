@@ -1,72 +1,76 @@
 Client = require('request-json').JsonClient;
-ReuConfig = require('../models/reuconfig');
 Config = require('../lib/config');
+ReuConfig = require('../models/reuconfig');
+
 
 ReceiptDetail = require('../models/receiptdetail');
 
 module.exports = ApiManager = {
-    
-    //# configurez votre domaine (ie: http://www.skerou.com/)
+
+    ///////////////////////
+    //// zone à éditer ////
+
+    // n'oublier pas d'entrer votre nom de reutilisateur dans ../lib/config .
+
+    // configurez votre nom de domaine
     apiHostname: 'http://localhost:9800/',
-
-    //# configurez votre nom de réutilisateur
-    //# (doit être unique sur toute la plateforme, pas d'espace ou de caractère spéciaux)
-    // TODO
-    reutilisateurID : 'reutilisateurName',
-
-    //# liez des callbacks aux événements qui vous intéressent
+    
+    // liez des callbacks aux événements qui vous intéressent
     events: {
-        'reuconfig.update': 'onConfigChange',
-     //   'user.update': 'onInterUpdate',
+        //'receiptdetails.update': 'onInterUpdate',
+        'nomreutilisateur.update': 'onConfigChange', 
+        //'reuconfig.update': 'onConfigChange', 
     },
     
-    onConfigChange: function(event, id) {
-        console.log('conf change');
-        console.log(event);
-        console.log(id);
-        if (id != Config.reutilisateurID) {
-            return;
-        }
-
-        //# Ne modifiez pas cette ligne sauf si vous savez ce que vous faites
-        
-        /*ReuConfig.getConfig(function(err, conf) {
-            if (conf) {
-                ApiManager.api.setBasicAuth(conf.login, conf.password);
-            }
-        });*/
+    onConfigChange: function(ev, id) {
+        console.log('truc');
+        // Répercute le changement de user/mdp.
+        // Ne modifiez pas cette ligne sauf si vous savez ce que vous faites
+        ApiManager.updateCredentials(
+            function() {
 
 
-        //this.api.setBasicAuth(config.login, config.password);
+        // Ce callback est un bon moyent de détecter lorsque l'utilisateur enregistre
+        // initialement ses identiants
+        // Vous pouvez par exemple envoyer toutes les DATA déjà présentes
+        ReceiptDetail.all(function(err, docs) {
+            // err: contient une éventuelle erreur
+            // docs: contient un array de chaines JSON représentant tous
+            // les docs du doctype souhaité
 
-        //# Ce callback est un bon moyent de détecter lorsque l'utilisateur enregistre
-        //# initialement ses identiants
-        //# Vous pouvez par exemple envoyer toutes les DATA déjà présentes
-        ReceiptDetail.all(function(err, instances) {
-            ApiManager.api.post('test',
-            //'receiptdetails',
-            instances, function(err, response, body) {
+            // Votre requête HTTP à votre API ici :
+            ApiManager.api.post('test', docs, 
+                function(err, response, body) {
                     if (err != null) {
                         console.log(err);
                     }
-                    console.log(response);
+                    console.log(body);
                 });
         });
-
-        //@ds.post 'request/user/all/', {}, (err, response, docs) ->
-        //    # err: contient une éventuelle erreur
-        //    # docs: contient un array de chaines JSON représentant tous
-        //    #       les doc du doctype souhaité
-
-        //    # Votre requête HTTP ici
+        });
     },
+    
+
+    //// FIN de la zone à éditer ////
+    /////////////////////////////////
+   
+    // Ne modifiez pas cette ligne sauf si vous savez ce que vous faites
+    updateCredentials: function(callback) { 
+        ReuConfig.getConfig(function(err, conf) {
+            if (conf) {
+                ApiManager.api.setBasicAuth(conf.login, conf.password);
+            }
+            if (callback) {
+                callback();
+            }
+        });
+    },
+
 };
+
+
 
 // Init API :
 ApiManager.api = new Client(ApiManager.apiHostname);
+ApiManager.updateCredentials();
 
-ReuConfig.getConfig(function(err, conf) {
-    if (conf) {
-        ApiManager.api.setBasicAuth(conf.login, conf.password);
-    }
-});

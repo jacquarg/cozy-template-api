@@ -9,7 +9,7 @@ module.exports = {
         post: Main.saveIds
     }, 
     
-    'home': {
+    '': {
         get: Main.home
     },
 };

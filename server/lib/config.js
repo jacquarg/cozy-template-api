@@ -1,5 +1,4 @@
-module.exports.reuConfig = function() {
-    return "NomReutilisateur" + 'Config' ;    
-};
+// configurez votre nom de réutilisateur
+// (doit être unique sur toute la plateforme, pas d'espace ou de caractère spéciaux)
 
-module.exports.reutilisateurID = "NomReutilisateur";
+module.exports.reutilisateurID = "nomreutilisateur";
