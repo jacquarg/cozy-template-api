@@ -13,7 +13,7 @@
   },
   
   "scripts": {
-    "start": "node server.jd"
+    "start": "node server.js"
   },
   "repository": "https://github.com/jsilvestre/cozy-api",
   "author": "Cozycloud",
