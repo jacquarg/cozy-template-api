@@ -17,13 +17,33 @@ module.exports = ApiManager = {
     
     // liez des callbacks aux événements qui vous intéressent
     events: {
-        //'receiptdetails.update': 'onInterUpdate',
+        'receiptdetail.update': 'onInterUpdate',
         'nomreutilisateur.update': 'onConfigChange', 
-        //'reuconfig.update': 'onConfigChange', 
     },
     
+
+    onInterUpdate: function(ev, id) {
+        // On obtient le document qui a été mis à jour,
+        ReceiptDetail.find(id, 
+            function(err, doc) {
+                if (err != null) {
+                    console.log("onInterUpdate > " + err);
+
+                } else {
+                    // On envoie le document via l'API
+                    ApiManager.api.post('test', doc, 
+                        function(err, response, body) {
+                            if (err != null) {
+                                console.log(err);
+                            }
+                            console.log(body);
+                        });
+                }
+            });
+    
+    },
+
     onConfigChange: function(ev, id) {
-        console.log('truc');
         // Répercute le changement de user/mdp.
         // Ne modifiez pas cette ligne sauf si vous savez ce que vous faites
         ApiManager.updateCredentials(
