@@ -6,7 +6,7 @@ module.exports.saveIds = function(req, res) {
         if (err != null) {
             res.send(500, "An error occurred while setting the configuration -- " + err);
         } else {
-            res.redirect('../');
+            res.redirect('back');
         }
       
     });
